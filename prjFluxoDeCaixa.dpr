@@ -2,13 +2,15 @@ program prjFluxoDeCaixa;
 
 uses
   Vcl.Forms,
-  FluxoDeCaixa in 'FluxoDeCaixa.pas' {Form1};
+  FluxoDeCaixa in 'FluxoDeCaixa.pas' {frmFluxoDeCaixa},
+  NewCashFlow in 'NewCashFlow.pas' {frmNewCashFlow};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TfrmFluxoDeCaixa, frmFluxoDeCaixa);
+  Application.CreateForm(TfrmNewCashFlow, frmNewCashFlow);
   Application.Run;
 end.

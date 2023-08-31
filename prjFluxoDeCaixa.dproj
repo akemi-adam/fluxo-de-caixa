@@ -99,7 +99,11 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="FluxoDeCaixa.pas">
-            <Form>Form1</Form>
+            <Form>frmFluxoDeCaixa</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="NewCashFlow.pas">
+            <Form>frmNewCashFlow</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">
