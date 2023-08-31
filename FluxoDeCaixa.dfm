@@ -25,6 +25,13 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
     Height = 14
     Caption = 'Novo caixa'
   end
+  object Label1: TLabel
+    Left = 536
+    Top = 184
+    Width = 42
+    Height = 14
+    Caption = 'Label1'
+  end
   object lsbCashList: TListBox
     Left = 8
     Top = 24
@@ -40,6 +47,7 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
     Height = 29
     Caption = 'Adicionar'
     TabOrder = 1
+    OnClick = btnNewPeriodClick
   end
   object btnNewCashFlow: TButton
     Left = 520
@@ -49,5 +57,11 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
     Caption = 'Adicionar'
     TabOrder = 2
     OnClick = btnNewCashFlowClick
+  end
+  object FDConnection: TFDConnection
+    Params.Strings = (
+      'DriverID=SQLite')
+    Left = 536
+    Top = 352
   end
 end
