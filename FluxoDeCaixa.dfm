@@ -25,13 +25,6 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
     Height = 14
     Caption = 'Novo caixa'
   end
-  object Label1: TLabel
-    Left = 536
-    Top = 184
-    Width = 42
-    Height = 14
-    Caption = 'Label1'
-  end
   object lsbCashList: TListBox
     Left = 8
     Top = 24

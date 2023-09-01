@@ -19,7 +19,6 @@ type
     lblCashFlow: TLabel;
     btnNewCashFlow: TButton;
     FDConnection: TFDConnection;
-    Label1: TLabel;
     procedure btnNewCashFlowClick(Sender: TObject);
     procedure btnNewPeriodClick(Sender: TObject);
   private
@@ -48,8 +47,20 @@ uses NewCashFlow;
   end;
 
   procedure TfrmFluxoDeCaixa.btnNewPeriodClick(Sender: TObject);
+  var tdfQuery: TFDQuery; today: TDateTime;
   begin
-    FDConnection.Params.Values['Database'] := GetCurrentDir + '\database.db';
+    tdfQuery := TDFQuery.Create(nil);
+    try
+      FDConnection.Params.Values['Database'] := GetCurrentDir + '\database.db';
+      // FDConnection.Open;
+      tdfQuery.Connection := FDConnection;
+      today := Now;
+      tdfQuery.SQL.Text := 'INSERT INTO periods (date) VALUES (' + DateToStr(today) + ')';
+      tdfQuery.Open();
+    finally
+      tdfQuery.Close;
+      tdfQuery.DisposeOf;
+    end;
     // Label1.Caption := 'Deu certo';
   end;
 
