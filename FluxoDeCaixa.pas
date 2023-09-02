@@ -1,4 +1,4 @@
-unit FluxoDeCaixa;
+﻿unit FluxoDeCaixa;
 
 interface
 
@@ -9,7 +9,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
   FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.VCLUI.Wait,
-  FireDAC.Comp.Client;
+  FireDAC.Comp.Client, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet;
 
 type
   TfrmFluxoDeCaixa = class(TForm)
@@ -19,8 +20,10 @@ type
     lblCashFlow: TLabel;
     btnNewCashFlow: TButton;
     FDConnection: TFDConnection;
+    queryPeriod: TFDQuery;
     procedure btnNewCashFlowClick(Sender: TObject);
     procedure btnNewPeriodClick(Sender: TObject);
+    procedure frmOnCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,30 +41,60 @@ implementation
 
 uses NewCashFlow;
 
-
   procedure TfrmFluxoDeCaixa.btnNewCashFlowClick(Sender: TObject);
   var frmNewCashFlow: TfrmNewCashFlow;
   begin
     frmNewCashFlow := TfrmNewCashFlow.Create(self);
-    frmNewCashFlow.Show;
+    frmNewCashFlow.ShowModal;
   end;
 
   procedure TfrmFluxoDeCaixa.btnNewPeriodClick(Sender: TObject);
-  var tdfQuery: TFDQuery; today: TDateTime;
+  var today: string;
   begin
-    tdfQuery := TDFQuery.Create(nil);
+    FDConnection.Connected := True;
     try
-      FDConnection.Params.Values['Database'] := GetCurrentDir + '\database.db';
-      // FDConnection.Open;
-      tdfQuery.Connection := FDConnection;
-      today := Now;
-      tdfQuery.SQL.Text := 'INSERT INTO periods (date) VALUES (' + DateToStr(today) + ')';
-      tdfQuery.Open();
-    finally
-      tdfQuery.Close;
-      tdfQuery.DisposeOf;
+      // Verify if period already registered
+      queryPeriod.Connection := FDConnection;
+      today :=  DateToStr(Now);
+      queryPeriod.SQL.Text := 'SELECT COUNT(id) AS Total FROM periods WHERE substr(date, 4, 2) = ''' + Copy(today, 4, 2) + '''';
+      queryPeriod.Open;
+      if queryPeriod.FieldByName('Total').AsInteger = 1 then
+        begin
+          ShowMessage('O período desse mês já foi cadastrado');
+          Exit;
+        end;
+      // Resgister new period
+      queryPeriod.SQL.Text := 'INSERT INTO periods (date) VALUES (:date)';
+      queryPeriod.ParamByName('date').AsString := today;
+      queryPeriod.ExecSQL;
+      ShowMessage('Período criado com sucesso!');
+    except
+      on e: Exception do
+      begin
+        ShowMessage('Houve um erro ao criar o período: ' + e.Message);
+      end;
     end;
-    // Label1.Caption := 'Deu certo';
+    FDConnection.Connected := False;
+  end;
+
+  procedure TfrmFluxoDeCaixa.frmOnCreate(Sender: TObject);
+  begin
+    FDConnection.Connected := True;
+    try
+      queryPeriod.Connection := FDConnection;
+      queryPeriod.SQL.Text := 'SELECT * FROM periods';
+      queryPeriod.Open;
+      lsbCashList.Items.Clear;
+      while not queryPeriod.Eof do
+      begin
+        lsbCashList.Items.Add('Fluxo de ' + queryPeriod.FieldByName('date').AsString);
+        queryPeriod.Next;
+      end;
+    finally
+      queryPeriod.Close;
+      queryPeriod.DisposeOf;
+    end;
+      FDConnection.Connected := False;
   end;
 
 end.

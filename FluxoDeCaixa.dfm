@@ -10,6 +10,7 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
   Font.Height = -12
   Font.Name = 'Consolas'
   Font.Style = []
+  OnCreate = frmOnCreate
   TextHeight = 14
   object lblPeriod: TLabel
     Left = 520
@@ -53,8 +54,17 @@ object frmFluxoDeCaixa: TfrmFluxoDeCaixa
   end
   object FDConnection: TFDConnection
     Params.Strings = (
+      'LockingMode=Normal'
+      
+        'Database=C:\Users\lucri\OneDrive\Documentos\Embarcadero\Studio\P' +
+        'rojects\database.db'
       'DriverID=SQLite')
     Left = 536
-    Top = 352
+    Top = 272
+  end
+  object queryPeriod: TFDQuery
+    Connection = FDConnection
+    Left = 536
+    Top = 312
   end
 end
